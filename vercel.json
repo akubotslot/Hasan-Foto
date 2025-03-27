@@ -3,21 +3,16 @@
     "framework": null,
     "functions": {
         "api/index.php": {
-            "runtime": "vercel-php@0.5.0"
+            "runtime": "@vercel/php"
         }
     },
     "routes": [
-        {
-            "src": "/build/(.*)",
-            "dest": "/public/build/$1"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/api/index.php"
-        }
+        { "src": "/build/(.*)", "dest": "/public/build/$1" },
+        { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "public": true,
-    "buildCommand": "composer install --no-dev && php artisan migrate --force && vite build",
+    "installCommand": "curl -sS https://getcomposer.org/installer | php && php composer.phar install --no-dev",
+    "buildCommand": "php artisan migrate --force && vite build",
     "outputDirectory": "public",
     "env": {
         "APP_ENV": "production",
