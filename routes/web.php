@@ -1,7 +1,10 @@
 <?php
+
+use App\Http\Controllers\BackupController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\DatabaseBackupController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PengeluaranController;
 use App\Http\Controllers\PenggunaanBarangController;
@@ -37,3 +40,7 @@ Route::resource('satuan', SatuanController::class);
  Route::post('/update-notifikasi/{id}', [PengaturanController::class, 'updateNotifikasi']);
 
  Route::post('/update-minimum-stok/{id}', [PengaturanController::class, 'updateMinimumStok']);
+
+ Route::get('/barang/cari', [BarangController::class, 'cari'])->name('barang.cari');
+
+ Route::get('/backup-database', [DatabaseBackupController::class, 'backup'])->name('backup.database');

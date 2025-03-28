@@ -4,10 +4,12 @@
 
 @section('content')
 <div class="bg-white p-6 rounded-lg shadow-lg">
-    <h2 class="text-xl font-bold mb-4">Riwayat Pengeluaran</h2>
-    <a href="{{ route('pengeluaran.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 inline-block hover:bg-blue-600 transition duration-200">
+    <div class="flex justify-between items-center mb-4">
+    <h2 class="text-2xl font-bold">Riwayat Pengeluaran</h2>
+    <a href="{{ route('pengeluaran.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded inline-block hover:bg-blue-600 transition duration-200">
         Tambah Pengeluaran
     </a>
+    </div>  
 
     <div class="overflow-x-auto">
     <table class="w-full mt-4">

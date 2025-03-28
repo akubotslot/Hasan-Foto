@@ -5,65 +5,73 @@
 @section('content')
     <style>
         #scannerContainer {
-    position: relative;
-    width: 80vw; /* Lebar maksimal 80% dari viewport width */
-    max-width: 600px; /* Maksimal 600px agar tidak terlalu lebar di desktop */
-    aspect-ratio: 16 / 9; /* Proporsi tetap */
-    overflow: hidden;
-    margin: auto; /* Supaya tetap berada di tengah */
-}
+            position: relative;
+            width: 80vw;
+            /* Lebar maksimal 80% dari viewport width */
+            max-width: 600px;
+            /* Maksimal 600px agar tidak terlalu lebar di desktop */
+            aspect-ratio: 16 / 9;
+            /* Proporsi tetap */
+            overflow: hidden;
+            margin: auto;
+            /* Supaya tetap berada di tengah */
+        }
 
-#preview {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+        #preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-#scannerLine {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: red;
-    animation: scanAnimation 2s infinite linear;
-}
+        #scannerLine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: red;
+            animation: scanAnimation 2s infinite linear;
+        }
 
-#scannerDot {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    background: red;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 10px red;
-}
+        #scannerDot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            background: red;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px red;
+        }
 
-@keyframes scanAnimation {
-    0% {
-        top: 0;
-    }
-    50% {
-        top: 100%;
-    }
-    100% {
-        top: 0;
-    }
-}
+        @keyframes scanAnimation {
+            0% {
+                top: 0;
+            }
 
+            50% {
+                top: 100%;
+            }
+
+            100% {
+                top: 0;
+            }
+        }
     </style>
     <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h2 class="text-xl font-bold mb-4">Riwayat Penggunaan Barang</h2>
-        <div class="flex items-center gap-2 mt-8">
+        <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold ">Riwayat Penggunaan Barang</h2>
+        <div class="flex items-center gap-2 ">
+            <button type="button" id="scanButton" class="p-2 bg-gray-300 rounded-lg hover:bg-gray-400 flex items-center">
+                <img src="{{ asset('barcode-scan.png') }}" alt="Scan" class="h-6 w-6">
+            </button>
             <a href="{{ route('penggunaan_barang.create') }}"
                 class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200">
                 Tambah Penggunaan Barang
             </a>
-            <button type="button" id="scanButton" class="p-2 bg-gray-300 rounded-lg hover:bg-gray-400 flex items-center">
-                <img src="{{ asset('barcode-scan.png') }}" alt="Scan" class="h-6 w-6">
-            </button>
+            
+        </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full mt-4">
@@ -123,12 +131,16 @@
 
         </div>
     </div>
+    <audio id="barcodeSound" src="{{ asset('barcode_sound.mp3') }}" preload="auto"></audio>
+
     <!-- SweetAlert2 Script -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
     <script>
         let flashEnabled = false;
         let track; // Untuk menyimpan track video
+        let scanning = false; // Tambahkan flag untuk mencegah spam
+        let lastScannedCode = ""; // Simpan kode terakhir yang dideteksi
 
         document.getElementById("toggleFlash").addEventListener("click", function() {
             if (track && track.getCapabilities().torch) {
@@ -140,7 +152,12 @@
                 });
                 this.textContent = flashEnabled ? "Matikan Flash" : "Nyalakan Flash";
             } else {
-                alert("Flash tidak didukung di perangkat ini.");
+                Swal.fire({
+                    title: "Flash tidak didukung",
+                    text: "Perangkat ini tidak mendukung penggunaan flash.",
+                    icon: "error",
+                    confirmButtonText: "OK"
+                });
             }
         });
 
@@ -164,11 +181,9 @@
         document.getElementById("scanButton").addEventListener("click", function() {
             let scannerModal = document.getElementById("scannerModal");
             scannerModal.classList.remove("hidden");
-            console.log("▶️ Tombol Scan ditekan, modal scanner ditampilkan.");
 
             // Cek apakah Quagga sudah berjalan sebelumnya
             if (Quagga.initialized) {
-                console.log("🛑 Quagga sudah berjalan, menghentikan dulu...");
                 Quagga.stop();
             }
 
@@ -195,15 +210,17 @@
                     track = stream.getVideoTracks()[0];
 
                     videoElement.addEventListener("loadedmetadata", () => {
-                        console.log("✅ Kamera siap digunakan.");
                         startQuagga();
                     });
                 })
                 .catch(error => {
-                    console.error("❌ Gagal mengakses kamera:", error);
-                    alert("Tidak bisa mengakses kamera. Pastikan izin kamera telah diberikan.");
+                    Swal.fire({
+                        title: "Gagal mengakses kamera",
+                        text: "Tidak bisa mengakses kamera. Pastikan izin kamera telah diberikan.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
                 });
-
         });
 
         // Fungsi untuk memulai Quagga setelah kamera aktif
@@ -223,24 +240,23 @@
                         },
                         facingMode: "environment"
                     }
-
                 },
                 decoder: {
                     readers: ["code_128_reader", "ean_reader", "ean_8_reader"]
                 }
             }, function(err) {
                 if (err) {
-                    console.error("❌ ERROR: Gagal mengaktifkan kamera!", err);
-                    alert("Gagal mengakses kamera. Pastikan izin sudah diberikan.");
+                    Swal.fire({
+                        title: "Gagal mengaktifkan kamera",
+                        text: "Pastikan izin sudah diberikan.",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    });
                     return;
                 }
-                console.log("✅ Kamera berhasil diaktifkan, memulai scan...");
                 Quagga.start();
                 Quagga.initialized = true;
             });
-
-            let scanning = false; // Tambahkan flag untuk mencegah spam
-            let lastScannedCode = ""; // Simpan kode terakhir yang dideteksi
 
             Quagga.onDetected(function(result) {
                 let kodeBarang = result.codeResult.code;
@@ -248,7 +264,9 @@
                 if (!scanning && kodeBarang !== lastScannedCode) {
                     scanning = true;
                     lastScannedCode = kodeBarang; // Simpan kode terakhir agar tidak spam
-                    console.log("🎯 Barcode terdeteksi: ", kodeBarang);
+
+                    // Putar audio saat barcode berhasil ditemukan
+                    document.getElementById("barcodeSound").play();
 
                     // Cek apakah barang ada di database sebelum redirect
                     fetch(`/cek-barang/${kodeBarang}`)
@@ -267,7 +285,7 @@
                                     tracks.forEach(track => track.stop());
                                 }
                             } else {
-                                // Jika barang tidak ditemukan, tampilkan alert dan aktifkan scan ulang setelah delay
+                                // Jika barang tidak ditemukan, tampilkan SweetAlert2
                                 Swal.fire({
                                     title: "Kode tidak ditemukan!",
                                     text: "Barang dengan kode ini tidak ada di database.",
@@ -283,29 +301,19 @@
                             }
                         })
                         .catch(error => {
-                            console.error("❌ Error saat mengecek barang:", error);
                             scanning = false;
                             lastScannedCode = ""; // Reset agar tetap bisa scan ulang
                         });
                 }
-            });
-
-
-
-            // Debugging frame
-            Quagga.onProcessed(function(result) {
-                console.log("🔄 Frame diproses:", result);
             });
         }
 
         // Fungsi menutup scanner
         function closeScanner() {
             let scannerModal = document.getElementById("scannerModal");
-            // Matikan garis scanner saat scanner ditutup
             document.getElementById("scannerLine").style.display = "none";
 
             scannerModal.classList.add("hidden");
-            console.log("🛑 Scanner ditutup.");
 
             // Stop Quagga dan kamera
             Quagga.stop();

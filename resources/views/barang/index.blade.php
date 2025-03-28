@@ -4,12 +4,26 @@
 
 @section('content')
     <div class="bg-white p-6 rounded-lg shadow-lg">
-        <h2 class="text-xl font-bold mb-4">Daftar Barang</h2>
+        <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">Daftar Barang</h2>
         <a href="{{ route('barang.create') }}"
-            class="bg-blue-500 text-white px-4 py-2 rounded mt-4 inline-block hover:bg-blue-600 transition duration-200">
+            class="bg-blue-500 text-white px-4 py-2 rounded inline-block hover:bg-blue-600 transition duration-200">
             Tambah Barang
         </a>
-
+ 
+        </div>
+        <div class="mb-4">
+            <div class="relative">
+                <input type="text" id="search" placeholder="Cari kode barang atau nama barang..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                <div class="absolute right-3 top-2.5 text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
         <!-- Wrapper untuk membuat tabel bisa di-scroll secara horizontal di mobile -->
         <div class="overflow-x-auto">
             <table class="w-full mt-4 min-w-max">
@@ -65,6 +79,21 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        document.getElementById("search").addEventListener("input", function() {
+        const query = this.value.toLowerCase();
+        const rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            const kodeBarang = row.cells[1].textContent.toLowerCase(); // Kode Barang
+            const namaBarang = row.cells[2].textContent.toLowerCase(); // Nama Barang
+
+            if (kodeBarang.includes(query) || namaBarang.includes(query)) {
+                row.style.display = ""; // Tampilkan baris
+            } else {
+                row.style.display = "none"; // Sembunyikan baris
+            }
+        });
+    });
         function hapusBarang(id) {
             Swal.fire({
                 title: 'Apakah Anda yakin?',

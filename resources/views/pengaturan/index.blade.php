@@ -4,7 +4,12 @@
 
 @section('content')
     <div class="container mx-auto max-w-lg bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-bold mb-4">Pengaturan Aplikasi</h2>
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold ">Pengaturan Aplikasi</h2>
+            <form action="{{ route('backup.database') }}" method="GET">
+                <button type="submit">Backup Database</button>
+            </form>
+        </div>
 
         <div class="space-y-4">
             @foreach ($pengaturan as $item)
@@ -32,6 +37,8 @@
                         </label>
                     </div>
                 </div>
+
+                
 
                 <div class="mb-4">
                     <div class="flex justify-between">
@@ -127,6 +134,7 @@
     <!-- SweetAlert2 Script -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        
         function updateMinimumStok(value, id) {
             fetch("/update-minimum-stok/" + id, {
                     method: "POST",
