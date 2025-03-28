@@ -12,7 +12,7 @@ class SatuanController extends Controller
      */
     public function index()
     {
-        $satuan = satuan::all();
+        $satuan = Satuan::all();
         return view('satuan.index', compact('satuan'));
         
     }
@@ -34,14 +34,14 @@ class SatuanController extends Controller
             'jenis_satuan' => 'required'
         ]);
 
-        satuan::create($request->all());
+        Satuan::create($request->all());
         return redirect()->route('pengaturan.index')->with('success', 'Satuan berhasil ditambahkan');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(satuan $satuan)
+    public function show(Satuan $satuan)
     {
         //
     }
@@ -49,7 +49,7 @@ class SatuanController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(satuan $satuan)
+    public function edit(Satuan $satuan)
     {
         //
     }
@@ -57,7 +57,7 @@ class SatuanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, satuan $satuan)
+    public function update(Request $request, Satuan $satuan)
     {
         $request->validate([
             'jenis_satuan' => 'required'
@@ -70,7 +70,7 @@ class SatuanController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(satuan $satuan)
+    public function destroy(Satuan $satuan)
     {
         $satuan->delete();
         return redirect()->route('pengaturan.index')->with('success', 'Satuan berhasil dihapus');
