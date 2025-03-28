@@ -45,7 +45,8 @@
                             class="bg-red-500 text-white px-3 py-1 text-sm rounded hover:bg-red-600">
                             Hapus
                         </button>
-                        <form id="delete-form-{{ $item->id }}" action="{{ route('barang.destroy', $item->id) }}" method="POST" class="hidden">
+                        <form id="delete-form-{{ $item->id }}" action="{{ secure_url(route('barang.destroy', $item->id)) }}" method="POST" class="hidden">
+                            
                             @csrf
                             @method('DELETE')
                         </form>

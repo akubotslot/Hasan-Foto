@@ -52,8 +52,8 @@ return [
     |
     */
 /*'url' => env('APP_URL', 'https://hasan-foto-production.up.railway.app'),*/
-    'url' => env('APP_URL', 'https://hasan-foto-production.up.railway.app'),
 
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
