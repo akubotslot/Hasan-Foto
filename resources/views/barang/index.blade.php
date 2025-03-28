@@ -48,9 +48,7 @@
                                     Hapus
                                 </button>
                                 <form id="delete-form-{{ $item->id }}"
-                                    action="{{ secure_url(route('barang.destroy', $item->id)) }}"
-                                    method="POST"
-                                    class="hidden">
+                                    action="{{ route('barang.destroy', $item->id) }}" method="POST" class="hidden">
                                     @csrf
                                     @method('DELETE')
                                 </form>
