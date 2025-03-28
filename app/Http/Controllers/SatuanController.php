@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\satuan;
+use App\Models\Satuan;
 use Illuminate\Http\Request;
 
 class SatuanController extends Controller
